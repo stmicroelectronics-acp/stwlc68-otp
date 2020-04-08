@@ -1,4 +1,4 @@
-"# stwlc68-otp" 
+"stwlc68-otp" 
 
 To Compile:
 
@@ -6,12 +6,11 @@ To Compile:
 	    	otp.c i2c_interface.c -L"path to libgpiod lib directory" -lgpiod
 			  
 	example: 
-			gcc -o otp_tool -I export/rootfs/include main.c otp.c i2c_interface.c -L export/rootfs/lib -lgpiod
+		gcc -o otp_tool -I export/rootfs/include main.c otp.c i2c_interface.c -L export/rootfs/lib -lgpiod
 	
 To Run:	
-
-			./"name of the executable"
+	./"name of the executable"
 	
 	example:
-			./otp_tool
+		./otp_tool
 			 
