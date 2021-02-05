@@ -457,21 +457,7 @@ int otp_program()
    
     printf("Clean Addr: %08X\n", clean_addr_current);    
     otp_free_space = OTP_MAX_SIZE - (clean_addr_current & 0xFFFF);    
-    printf("OTP available space: %d bytes, data to program size: %d bytes\n", otp_free_space, data_to_program_size);
-   
-	write_buff[0] = (uint8_t)(clean_addr_current & 0x00FF);
-	write_buff[1] = (uint8_t)((clean_addr_current & 0xFF00) >> 8);
-
-	if ((err = fw_i2c_write(FW_CLEAN_ADDRRESS_REG, write_buff, 2)) < OK) {
-		printf("Error updating the clean address\n");
-		goto exit_1;
-	}
-	
-	write_buff[0] = CLEAN_ADDR_UPDATE_VALUE;
-	if ((err = fw_i2c_write(OTP_WRITE_COMMAND_REG, write_buff, 1)) < OK) {
-		printf("Error updating the clean address\n");
-		goto exit_1;
-	}
+    printf("OTP available space: %d bytes, data to program size: %d bytes\n", otp_free_space, data_to_program_size);	
 	
     printf("Loading RAM FW!! \n");
     if((err = load_ram_fw()) < OK) goto exit_1;
@@ -502,6 +488,22 @@ int otp_program()
 		rom_mode_boot();
         goto exit_1;
     }
+	
+	write_buff[0] = (uint8_t)(clean_addr_current & 0x00FF);
+	write_buff[1] = (uint8_t)((clean_addr_current & 0xFF00) >> 8);
+
+	if ((err = fw_i2c_write(FW_CLEAN_ADDRRESS_REG, write_buff, 2)) < OK) {
+		printf("Error updating the clean address\n");
+		rom_mode_boot();
+		goto exit_1;
+	}
+	
+	write_buff[0] = CLEAN_ADDR_UPDATE_VALUE;
+	if ((err = fw_i2c_write(OTP_WRITE_COMMAND_REG, write_buff, 1)) < OK) {
+		printf("Error updating the clean address\n");
+		rom_mode_boot();
+		goto exit_1;
+	}
  
     if((err = otp_write(data_to_program, data_to_program_size, RAM_DATA_START_ADDRESS)) < OK) {
         printf("Error while writing OTP\n");
